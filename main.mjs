@@ -1,9 +1,17 @@
-import { createServer } from "http";
+//import { createServer } from "http";
 import MongoDBBuilder from "./mongodb_builder.mjs";
 
-const m = new MongoDBBuilder("testing");
+const m = new MongoDBBuilder("A");
 
-function nodejs_server()
+async function main()
+{
+    await m.createDB();
+    console.log(m.Message);
+}
+
+main();
+
+/* function nodejs_server()
 {
     let server = createServer((req, res) => {
 
@@ -12,13 +20,11 @@ function nodejs_server()
     res.end(() => {    
         let isDBCreated = m.createDB();
         process.stdout.write("Has new database been created? ");
-        isDBCreated === true? process.stdout.write("Yes.") : process.stdout.write("No");
+        isDBCreated === true? process.stdout.write("Yes./n") : process.stdout.write("No./n");
                 
         if (isDBCreated)
         {
             console.log("I'm in isDBCreated if statement.");
-            /*console.log(`Database was successfully created.`);
-            console.log(`Name of new database is: ${m.dbName}.`);*/
         }
         
         server.close(() => {
@@ -29,4 +35,4 @@ function nodejs_server()
     return server;
 }
 
-nodejs_server().listen(8080, () => {console.log("Server is listening on port 8080.")});
+nodejs_server().listen(8080, () => {console.log("Server is listening on port 8080.")}); */
