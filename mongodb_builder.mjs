@@ -31,7 +31,6 @@ export default class MongoDBBuilder
     set dbName(dbName){this.#dbName = dbName;}
 
     /**
-     * 
      * @param {string} collectionName 
      * @param {mongodb.Document} newDocument 
      */
@@ -47,24 +46,11 @@ export default class MongoDBBuilder
             const collectionsNames = collectionsArray.map((obj) => {return obj.name;});
 
             console.log(`There are ${collectionsNames.length} collections in this database.`);
-            /* let collectionExists = false;
-            for (let i = 0; i < collectionsNames.length; i++) 
-            {
-                console.log(`Collection name: ${collectionsNames[i]}`);
-                if (collectionsNames[i] === newCollectionName) 
-                {
-                    this.#message += ` Collection was not created because a collection with name ${newCollectionName} already exists. `;
-                    collectionExists = true;
-                }
-            } */
-            //if(collectionExists === false)
-            //{
-                const newCollection = newDB.collection(collectionName);
-                this.#message += `Collection created. `;
+            const newCollection = newDB.collection(collectionName);
+            this.#message += `Collection created. `;
                 
-                await newCollection.insertOne(newDocument);
-                this.#message += `Document created. `;
-            //}            
+            await newCollection.insertOne(newDocument);
+            this.#message += `Document created. `;            
         }
         finally
         {

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Bootstrap CSS below -->
+        <!-- CSS only -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+    <body>
+        <form>
+            <table>
+                <tr>                    
+                    <td class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">URI</span>                    
+                        <input type="text" id="inputServer" class="form-control" autocomplete="on">
+                        
+                    </td>           
+                </tr>
+                <tr>
+                    <td class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">DB</span>                    
+                        <input type="text" id="inputDB" class="form-control" autocomplete="on">
+                    </td>
+                </tr>
+                <br>
+                <tr>
+                    <td class="input-group mb-3">
+                        <button type="button" id="connectButton" class="btn btn-light form-control">Connect</button>
+                    </td>
+                </tr>
+            </table>            
+        </form>
+
+    <div id="divCollections"></div>
+
+    <script>
+
+        function hover()
+        {
+            //let elem = document.getElementById(id);
+            if(this.classList.contains("btn-light"))
+            {
+                this.classList.replace("btn-light", "btn-dark");
+            }
+        }
+
+        function notHover()
+        {
+            //let elem = document.getElementById(id);
+            if(this.classList.contains("btn-dark"))
+            {
+                this.classList.replace("btn-dark", "btn-light");
+            }
+        }
+
+        let connectButton = document.getElementById("connectButton");
+        connectButton.addEventListener("mouseover", hover);
+        connectButton.addEventListener("mouseout", notHover);
+
+        function getCollections()
+        {
+            $.ajax({
+                method: "POST",
+                url: "http://localhost:8080/MongoCollections",
+                data: JSON.stringify({ server: document.getElementById("inputServer").value, db:  document.getElementById("inputDB").value}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response)
+                {
+                    console.log(`response: ${response}`);
+                    console.log(`typeof response: ${typeof response}`);
+                    console.log(`response.d: ${response.d}`);
+                    console.log(`typeof response.d: ${typeof response.d}`);
+                    document.getElementById("divCollections").innerText = response;  
+                }
+            });
+        }
+        document.getElementById("connectButton").addEventListener("click", getCollections);
+    </script>
+    </body>
+</html>
