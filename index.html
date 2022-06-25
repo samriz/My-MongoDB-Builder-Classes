@@ -1,26 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <style>
+            td{vertical-align: top;}
+        </style>
         <!-- Bootstrap CSS below -->
         <!-- CSS only -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        
     </head>
+    
     <body>
       <form>  
         <table>
             <tr>                    
                 <td class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">URI</span>                    
-                    <input type="text" id="inputServer" class="form-control" autocomplete="on" required>
-                    <span id="inputServerError" style="color:red" hidden><small>This field is required.</small></span>
+                    <input type="text" id="inputServer" class="form-control" autocomplete="on" required>                    
                 </td>           
+            </tr>
+            <tr>
+                <td style="color:red; vertical-align:text-top;" id="inputServerError" hidden>
+                    <small>This field is required.</small>
+                </td>
             </tr>
             <tr>
                 <td class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">DB</span>                    
                     <input type="text" id="inputDB" class="form-control" autocomplete="on" required>
-                    <span id="inputDBError" style="color:red" hidden><small>This field is required.</small></span>
+                </td>  
+            </tr>
+            <tr>
+                <td style="color:red; vertical-align:text-top;" id="inputDBError" hidden>
+                    <small>This field is required.</small>
                 </td>
             </tr>
             <br>
@@ -41,20 +54,53 @@
     <script>
         function getCollections()
         {
-            $.ajax({
-                method: "POST",
-                url: "http://localhost:8080/MongoCollections",
-                data: JSON.stringify({ server: document.getElementById("inputServer").value, db:  document.getElementById("inputDB").value}),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response)
-                {         
-                    //console.log(`JSON.stringify(response): ${JSON.stringify(response)}\n`);       
-                    document.getElementById("collectionsTextArea").innerText = JSON.stringify(response);
-                }
-            });
+            let serverString = document.getElementById("inputServer").value;
+            let inputServerError = document.getElementById("inputServerError");
+
+            let dbNameString = document.getElementById("inputDB").value;
+            let inputDBError = document.getElementById("inputDBError");
+
+            let valid = false;
+
+            if(validateFields(serverString, inputServerError) && validateFields(dbNameString, inputDBError))
+            {
+                $.ajax({
+                    method: "POST",
+                    url: "http://localhost:8080/MongoCollections",
+                    data: JSON.stringify({ server: document.getElementById("inputServer").value, db:  document.getElementById("inputDB").value}),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(response)
+                    {         
+                        //console.log(`JSON.stringify(response): ${JSON.stringify(response)}\n`); 
+                        if(response != undefined || response != null){      
+                            document.getElementById("collectionsTextArea").innerText = JSON.stringify(response);
+                            valid = true;
+                        }
+                    }
+                });
+            }
+            return valid;
         }
         document.getElementById("connectButton").addEventListener("click", getCollections);
+
+        function validateFields(str, errorElem)
+        {   
+            if(str.length > 0)
+            {
+                if(str.endsWith('/') === false)
+                {
+                    str = str.concat('/');
+                }
+                errorElem.hidden = true;
+            }
+            else
+            {
+                errorElem.hidden = false;
+                return false;
+            }
+            return true;
+        }
 
         function hover()
         {
