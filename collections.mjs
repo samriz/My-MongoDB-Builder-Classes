@@ -13,27 +13,28 @@ export default class MongoCollections
     constructor(server, dbName)
     {
         this.#server = server;
-        this.#dbName = dbName;
-        this.#collections = this.#getCollections();
+        this.#dbName = dbName;        
     }
 
-    get Collections()
+    async getCollections(fetch = true)
     {
-        return this.#collections;
+        if(fetch)
+        {
+            this.#collections = this.#connectToDBAndGetCollections();
+            return this.#collections;
+        }
+        else return this.#collections;
     }
 
-    async #getCollections()
+    async #connectToDBAndGetCollections()
     {
         const client = new mongodb.MongoClient(this.#server);
         try
         {
             await client.connect();
             const db = new mongodb.Db(client, this.#dbName);
-            const collectionsArray = await db.listCollections().toArray();
-            /* collectionsArray.forEach((element, index)=>{
-                
-            }); */
-            console.log(collectionsArray);
+            const collectionsArray = await db.listCollections().toArray();            
+            //console.log(collectionsArray);
             return collectionsArray;
         }
         finally

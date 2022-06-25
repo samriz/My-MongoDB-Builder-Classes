@@ -7,56 +7,38 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
     <body>
-        <form>
-            <table>
-                <tr>                    
-                    <td class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">URI</span>                    
-                        <input type="text" id="inputServer" class="form-control" autocomplete="on">
-                        
-                    </td>           
-                </tr>
-                <tr>
-                    <td class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">DB</span>                    
-                        <input type="text" id="inputDB" class="form-control" autocomplete="on">
-                    </td>
-                </tr>
-                <br>
-                <tr>
-                    <td class="input-group mb-3">
-                        <button type="button" id="connectButton" class="btn btn-light form-control">Connect</button>
-                    </td>
-                </tr>
-            </table>            
-        </form>
+      <form>  
+        <table>
+            <tr>                    
+                <td class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">URI</span>                    
+                    <input type="text" id="inputServer" class="form-control" autocomplete="on" required>
+                    <span id="inputServerError" style="color:red" hidden><small>This field is required.</small></span>
+                </td>           
+            </tr>
+            <tr>
+                <td class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">DB</span>                    
+                    <input type="text" id="inputDB" class="form-control" autocomplete="on" required>
+                    <span id="inputDBError" style="color:red" hidden><small>This field is required.</small></span>
+                </td>
+            </tr>
+            <br>
+            <tr>
+                <td class="input-group mb-3">
+                    <button type="button" id="connectButton" class="btn btn-dark form-control">Connect</button>
+                </td>
+            </tr>
+        </table>  
+    </form>          
 
-    <div id="divCollections"></div>
+        <main class="jumbotron">
+            <div id="divCollections">
+                <textarea id="collectionsTextArea" rows="6" cols="60" readonly></textarea>
+            </div>
+        </main>
 
     <script>
-
-        function hover()
-        {
-            //let elem = document.getElementById(id);
-            if(this.classList.contains("btn-light"))
-            {
-                this.classList.replace("btn-light", "btn-dark");
-            }
-        }
-
-        function notHover()
-        {
-            //let elem = document.getElementById(id);
-            if(this.classList.contains("btn-dark"))
-            {
-                this.classList.replace("btn-dark", "btn-light");
-            }
-        }
-
-        let connectButton = document.getElementById("connectButton");
-        connectButton.addEventListener("mouseover", hover);
-        connectButton.addEventListener("mouseout", notHover);
-
         function getCollections()
         {
             $.ajax({
@@ -66,16 +48,35 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(response)
-                {
-                    console.log(`response: ${response}`);
-                    console.log(`typeof response: ${typeof response}`);
-                    console.log(`response.d: ${response.d}`);
-                    console.log(`typeof response.d: ${typeof response.d}`);
-                    document.getElementById("divCollections").innerText = response;  
+                {         
+                    //console.log(`JSON.stringify(response): ${JSON.stringify(response)}\n`);       
+                    document.getElementById("collectionsTextArea").innerText = JSON.stringify(response);
                 }
             });
         }
         document.getElementById("connectButton").addEventListener("click", getCollections);
+
+        function hover()
+        {
+            //let elem = document.getElementById(id);
+            if(this.classList.contains("btn-dark"))
+            {
+                this.classList.replace("btn-dark", "btn-light");
+            }
+        }
+
+        function notHover()
+        {
+            //let elem = document.getElementById(id);
+            if(this.classList.contains("btn-light"))
+            {
+                this.classList.replace("btn-light", "btn-dark");
+            }
+        }
+
+        let connectButton = document.getElementById("connectButton");
+        connectButton.addEventListener("mouseover", hover);
+        connectButton.addEventListener("mouseout", notHover);
     </script>
     </body>
 </html>
