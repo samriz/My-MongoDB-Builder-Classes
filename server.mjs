@@ -17,20 +17,26 @@ app.get('/', (req, res) =>
   res.sendFile("C:/GitRepositories/MyMongoDBBuilderClasses/index.html");
 });
 
+app.post("/MongoCollections", async (req, res) => {
+
+  //parameters from ajax call
+  let server = req.body.server;
+  let db = req.body.db;
+  
+  res.send(await mongodbCollectionsHandler(server, db));
+});
+
+app.listen(8080);
+
+/***
+  * @param {string} server 
+  * @param {string} db
+ */
 async function mongodbCollectionsHandler(server, db) 
 {
   //"mongodb://localhost:27017/sameer"
   const mCollections = new MongoCollections(server, db);
   let collections = await mCollections.getCollections();
-  //console.log(`collections: ${collections}`);
   //console.log(`JSON.stringify(collections): ${JSON.stringify(collections)}`);
-  return collections;
+  return JSON.stringify(collections);
 }
-
-app.post("/MongoCollections", async (req, res) => {
-  let server = req.body.server;
-  let db = req.body.db;
-  res.send(await mongodbCollectionsHandler(server, db));
-});
-
-app.listen(8080);

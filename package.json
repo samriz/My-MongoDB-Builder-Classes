@@ -1,0 +1,24 @@
+{
+  "name": "mymongodbbuilderclasses",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samriz/My-MongoDB-Builder-Classes.git"
+  },
+  "author": "Sameer Rizvi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samriz/My-MongoDB-Builder-Classes/issues"
+  },
+  "homepage": "https://github.com/samriz/My-MongoDB-Builder-Classes#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "mongodb": "^4.7.0"
+  }
+}

@@ -12,10 +12,16 @@ export default class MongoCollections
      */
     constructor(server, dbName)
     {
+        //if(server.startsWith("/")) server.
+        this.#collections = new Array();
+        if (server.endsWith("/") === false) server = server.concat("/");
         this.#server = server;
         this.#dbName = dbName;        
     }
 
+    /***
+     * @param {boolean} fetch
+     */
     async getCollections(fetch = true)
     {
         if(fetch)
@@ -33,13 +39,24 @@ export default class MongoCollections
         {
             await client.connect();
             const db = new mongodb.Db(client, this.#dbName);
-            const collectionsArray = await db.listCollections().toArray();            
+            //const collectionsArray = await db.listCollections().toArray();            
             //console.log(collectionsArray);
-            return collectionsArray;
+            const employment_history = db.collection("employment_history");
+            const cursor = employment_history.find({});
+            let arrDocuments = new Array();
+            await cursor.forEach((doc) => {
+                arrDocuments.push(doc);
+            });
+            return arrDocuments;
+            /*for(let i = 0; i <result.length; i++)
+            {
+
+            }
+            return result;*/
         }
         finally
         {
-            // Ensures that the client will close when you finish/error
+            //Ensures that the client will close when you finish/error
             await client.close();
         }
     }

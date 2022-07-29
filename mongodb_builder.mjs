@@ -54,7 +54,7 @@ export default class MongoDBBuilder
         }
         finally
         {
-            // Ensures that the client will close when you finish/error
+            //Ensures that the client will close when you finish/error
             await client.close();
         }
     }

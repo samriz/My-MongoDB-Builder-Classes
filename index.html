@@ -2,64 +2,68 @@
 <html lang="en">
     <head>
         <style>
-            td{vertical-align: top;}
+            .input-group{vertical-align: top;}
+            .requiredMessage
+            {
+                font-size:0.8em;
+                color:red;                
+            }
         </style>
         <!-- Bootstrap CSS below -->
         <!-- CSS only -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>        
     </head>
     
-    <body>
-      <form>  
+    <body style="padding-left: 10px;padding-top: 10px;">
         <table>
-            <tr>                    
-                <td class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">URI</span>                    
-                    <input type="text" id="inputServer" class="form-control" autocomplete="on" required>                    
-                </td>           
-            </tr>
             <tr>
-                <td style="color:red; vertical-align:text-top;" id="inputServerError" hidden>
-                    <small>This field is required.</small>
+                <td class="input-group">
+                    <table>
+                        <tr>                    
+                            <td class="input-group">
+                                <span class="input-group-text">URI</span>                    
+                                <input type="text" id="inputServer"  class="form-control" autocomplete="on" value="mongodb://localhost:27017">                    
+                            </td>     
+                        </tr>
+                        <tr>
+                            <td id="inputServerError" class="input-group" hidden>
+                                <span class="requiredMessage">This field is required.</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="input-group">
+                                <span class="input-group-text">DB</span>                    
+                                <input type="text" id="inputDB" class="form-control" autocomplete="on" value="sameer">
+                            </td>  
+                        </tr>
+                        <tr>
+                            <td id="inputDBError" class="input-group" hidden>
+                                <span class="requiredMessage">This field is required.</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="input-group">
+                                <button type="button" id="connectButton" class="btn btn-dark">Connect</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="input-group">
+                    <td>                        
+                        <textarea id="collectionsTextArea" class="form-control" rows="12" cols="110" readonly></textarea>
+                    </td>
                 </td>
             </tr>
-            <tr>
-                <td class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">DB</span>                    
-                    <input type="text" id="inputDB" class="form-control" autocomplete="on" required>
-                </td>  
-            </tr>
-            <tr>
-                <td style="color:red; vertical-align:text-top;" id="inputDBError" hidden>
-                    <small>This field is required.</small>
-                </td>
-            </tr>
-            <br>
-            <tr>
-                <td class="input-group mb-3">
-                    <button type="button" id="connectButton" class="btn btn-dark form-control">Connect</button>
-                </td>
-            </tr>
-        </table>  
-    </form>          
-
-        <main class="jumbotron">
-            <div id="divCollections">
-                <textarea id="collectionsTextArea" rows="6" cols="60" readonly></textarea>
-            </div>
-        </main>
+        </table>   
 
     <script>
         function getCollections()
         {
             let serverString = document.getElementById("inputServer").value;
             let inputServerError = document.getElementById("inputServerError");
-
             let dbNameString = document.getElementById("inputDB").value;
             let inputDBError = document.getElementById("inputDBError");
-
             let valid = false;
 
             if(validateFields(serverString, inputServerError) && validateFields(dbNameString, inputDBError))
@@ -67,14 +71,17 @@
                 $.ajax({
                     method: "POST",
                     url: "http://localhost:8080/MongoCollections",
-                    data: JSON.stringify({ server: document.getElementById("inputServer").value, db:  document.getElementById("inputDB").value}),
+                    data: JSON.stringify({ server: document.getElementById("inputServer").value, db: document.getElementById("inputDB").value}),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    success: function(response)
-                    {         
-                        //console.log(`JSON.stringify(response): ${JSON.stringify(response)}\n`); 
-                        if(response != undefined || response != null){      
-                            document.getElementById("collectionsTextArea").innerText = JSON.stringify(response);
+                    success: function(response) //response is a javascript object
+                    {
+                        if(response != undefined || response != null)
+                        {      
+                            for(let i = 0; i < response.length; i++)
+                            {
+                                collectionsTextArea.value += "Employer: " + response[i].company + "\r\n" + "Title: " + response[i].title;
+                            }                                         
                             valid = true;
                         }
                     }
@@ -82,16 +89,11 @@
             }
             return valid;
         }
-        document.getElementById("connectButton").addEventListener("click", getCollections);
 
         function validateFields(str, errorElem)
         {   
             if(str.length > 0)
             {
-                if(str.endsWith('/') === false)
-                {
-                    str = str.concat('/');
-                }
                 errorElem.hidden = true;
             }
             else
@@ -104,7 +106,6 @@
 
         function hover()
         {
-            //let elem = document.getElementById(id);
             if(this.classList.contains("btn-dark"))
             {
                 this.classList.replace("btn-dark", "btn-light");
@@ -113,7 +114,6 @@
 
         function notHover()
         {
-            //let elem = document.getElementById(id);
             if(this.classList.contains("btn-light"))
             {
                 this.classList.replace("btn-light", "btn-dark");
@@ -123,6 +123,7 @@
         let connectButton = document.getElementById("connectButton");
         connectButton.addEventListener("mouseover", hover);
         connectButton.addEventListener("mouseout", notHover);
+        connectButton.addEventListener("click", getCollections);
     </script>
     </body>
 </html>
