@@ -3,40 +3,38 @@ import express from "express";
 import bodyParser from "body-parser";
 const router = express.Router();
 const app = express();
-// add router in express app
+//add router in express app
 app.use("/",router);
 
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-import MongoCollections from "./collections.mjs";
-
 app.get('/', (req, res) => 
 {  
   res.sendFile("C:/GitRepositories/MyMongoDBBuilderClasses/index.html");
 });
 
+import MongoDBHandlers from "./mongodb_handlers.mjs";
 app.post("/MongoCollections", async (req, res) => {
 
   //parameters from ajax call
-  let server = req.body.server;
+  let host = req.body.host;
   let db = req.body.db;
   
-  res.send(await mongodbCollectionsHandler(server, db));
+  let mh = new MongoDBHandlers(host, db);
+  res.send(await mh.getDocument());
+
+});
+
+app.post('/allCollectionNames', async (req, res) => {
+
+  let host = req.body.host;
+  let db = req.body.db;
+  
+  let mh = new MongoDBHandlers(host, db);
+  res.send(await mh.getCollections());
+
 });
 
 app.listen(8080);
-
-/***
-  * @param {string} server 
-  * @param {string} db
- */
-async function mongodbCollectionsHandler(server, db) 
-{
-  //"mongodb://localhost:27017/sameer"
-  const mCollections = new MongoCollections(server, db);
-  let collections = await mCollections.getCollections();
-  //console.log(`JSON.stringify(collections): ${JSON.stringify(collections)}`);
-  return JSON.stringify(collections);
-}
